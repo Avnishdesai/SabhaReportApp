@@ -34,6 +34,7 @@ class PersonListAdaptor internal constructor(
         notifyDataSetChanged()
     }
 
-    override fun getItemCount() = people.size
-
+    override fun getItemCount(): Int {
+        return people.size
+    }
 }

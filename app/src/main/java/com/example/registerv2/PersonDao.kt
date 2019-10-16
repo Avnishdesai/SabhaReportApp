@@ -8,6 +8,9 @@ interface PersonDao {
     @Query("SELECT * FROM t_Person")
     fun getAllPeople(): LiveData<List<Person>>
 
+    @Query("SELECT COUNT(*) FROM t_Person")
+    fun getNumPeople(): Int
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(person: Person)
 

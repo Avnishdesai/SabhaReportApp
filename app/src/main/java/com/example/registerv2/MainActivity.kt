@@ -1,16 +1,16 @@
 package com.example.registerv2
 
-import android.app.Activity
-import android.content.Intent
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextUtils
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,14 +23,15 @@ class MainActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
         val adaptor = PersonListAdaptor(this)
         recyclerView.adapter = adaptor
-        recyclerView.layoutManager = LinearLayoutManager(this)
+
+        val linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager.reverseLayout = true
+
+        recyclerView.layoutManager = linearLayoutManager
 
         personViewModel = ViewModelProviders.of(this).get(PersonViewModel::class.java)
 
         personViewModel.deleteAll()
-
-        val person = Person(9, "workingtest", "Old WOrd")
-        personViewModel.insert(person)
 
         personViewModel.allPeople.observe(this, Observer { people ->
             people?.let {
@@ -38,47 +39,36 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        fab.setOnClickListener {
-            val intent = Intent(this@MainActivity, NewPersonActivity::class.java)
-            startActivityForResult(intent, newPersonActivityRequestCode)
-        }
+        val saveButtonView = findViewById<Button>(R.id.button_save)
+        val editPersonView = findViewById<EditText>(R.id.edit_person)
 
-        val refreshButtonView = findViewById<Button>(R.id.refreshButton)
-
-        refreshButtonView?.setOnClickListener{
-            personViewModel.allPeople.observe(this, Observer { people ->
-                people?.let {
-                    adaptor.setPeople(it)
-                }
-            })
-        }
-
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == newPersonActivityRequestCode && resultCode == Activity.RESULT_OK){
-            data?.let {
-                val person = Person(9, "addingword", "workingworkds")
-                personViewModel.insert(person)
+        saveButtonView.setOnClickListener {
+            if (TextUtils.isEmpty(editPersonView.text)) {
                 Toast.makeText(
                     applicationContext,
-                    "New Word Added",
-                    Toast.LENGTH_LONG //End Here
+                    "No name entered",
+                    Toast.LENGTH_SHORT //End Here
                 ).show()
+            } else {
+                personViewModel.insert(
+                    Person(
+                        id = null,
+                        firstName = editPersonView.text.toString(),
+                        surname = "workingworkds"
+                    )
+                )
+
+                Toast.makeText(
+                    applicationContext,
+                    "Inserted person",
+                    Toast.LENGTH_SHORT //End Here
+                ).show()
+
+                adaptor.notifyDataSetChanged()
+                recyclerView.scrollToPosition(adaptor.getItemCount())
             }
-        } else {
-            Toast.makeText(
-                applicationContext,
-                R.string.empty_not_saved,
-                Toast.LENGTH_LONG //End Here
-            ).show()
-
         }
+
     }
 
-    companion object{
-        const val newPersonActivityRequestCode = 1
-    }
 }
