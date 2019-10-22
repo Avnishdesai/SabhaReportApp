@@ -1,8 +1,6 @@
 package com.sabha.report.Models
 
-
 import javax.persistence.*
-
 
 @Entity
 @Table(name = "cities")
