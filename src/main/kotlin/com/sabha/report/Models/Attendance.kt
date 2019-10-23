@@ -7,7 +7,7 @@ import javax.persistence.*
 @Table(name = "attendance")
 data class Attendance(
         @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long?,
         var mandal: String? = null,
         var center: String? = null,

@@ -5,4 +5,6 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface PersonRepo : CrudRepository<Person, Long>
+interface PersonRepo : CrudRepository<Person, Long>{
+
+}
